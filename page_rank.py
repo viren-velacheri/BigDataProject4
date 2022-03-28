@@ -16,7 +16,7 @@ edgeDF = spark.read.csv(input_file, comment="#", sep=r'\t').toDF("src", "dst")
 # Use vertices and edges to create graph g
 vertex_ranks = edgeDF.select('src').union(edgeDF.select('dst')).distinct().withColumnRenamed('src','id').withColumn("rank", lit(1))
 g = GraphFrame(vertex_ranks,edgeDF)
-iterations = 1
+iterations = 10
 
 for i in range(iterations):
     contribs = g.outDegrees.filter('outDegree != 0').join(vertex_ranks,['id']).withColumn('contribution', col('rank')/col('outDegree'))
