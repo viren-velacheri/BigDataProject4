@@ -28,10 +28,6 @@ ranks = g.pregel \
      .aggMsgs(sum(Pregel.msg())) \
      .run()
 
-#for i in range(iterations):
-#    contribs = g.outDegrees.filter('outDegree != 0').join(vertex_ranks,['id']).withColumn('contribution', col('rank')/col('outDegree'))
-#    contribs_dst = edgeDF.join(contribs, edgeDF.src==contribs.id).select('dst','contribution').groupBy('dst').sum().withColumn('newRank',0.15 + 0.85 * col('sum(contribution)'))
-#    vertex_ranks = vertex_ranks.join(contribs_dst, vertex_ranks.id==contribs_dst.dst, 'leftouter').na.fill(0.15).select('id','newRank').withColumnRenamed('newRank','rank')
 
 ranks.select('id','rank').sort("rank", "id").coalesce(1).write.option("header", True).csv(output_file)
 
